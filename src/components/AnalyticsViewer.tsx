@@ -582,7 +582,7 @@ export const AnalyticsViewer: React.FC<AnalyticsViewerProps> = ({
           </button>
         </div>
         
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-4">
           <button
             onClick={handleRefresh}
             disabled={isRefreshing}
