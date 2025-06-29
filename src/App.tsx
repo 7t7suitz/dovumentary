@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Script, StoryboardFrame, TranscriptionProject } from './types/production';
+import { Script, StoryboardFrame, TranscriptionProject, ProductionProject } from './types/production';
 import { ScriptEditor } from './components/ScriptEditor';
 import { StoryboardConverter } from './components/StoryboardConverter';
 import { TranscriptionEditor } from './components/TranscriptionEditor';
@@ -10,7 +10,8 @@ import { ScriptAnalyzer } from './components/ScriptAnalyzer';
 import { ABTestingTool } from './components/ABTestingTool';
 import { EmotionalArcAnalyzer } from './components/EmotionalArcAnalyzer';
 import { ProductionManagementSystem } from './components/ProductionManagementSystem';
-import { ProductionProject } from './types/production';
+import { InteractivePreviewSystem } from './components/InteractivePreviewSystem';
+import { DocumentaryPreview } from './types/preview';
 import { 
   FileText, 
   Film, 
@@ -23,11 +24,12 @@ import {
   Wand2,
   Edit3,
   Heart,
-  Calendar
+  Calendar,
+  Play
 } from 'lucide-react';
 
 function App() {
-  const [activeTab, setActiveTab] = useState<'editor' | 'storyboard' | 'transcription' | 'voiceover' | 'analyze' | 'collaborate' | 'abtest' | 'emotional' | 'production'>('editor');
+  const [activeTab, setActiveTab] = useState<'editor' | 'storyboard' | 'transcription' | 'voiceover' | 'analyze' | 'collaborate' | 'abtest' | 'emotional' | 'production' | 'preview'>('editor');
   const [script, setScript] = useState<Script | null>(null);
   const [showExporter, setShowExporter] = useState(false);
   const [currentUser] = useState({
@@ -273,6 +275,234 @@ function App() {
     updatedAt: new Date('2023-05-15')
   });
 
+  // Sample preview project for demo
+  const [previewProject, setPreviewProject] = useState<DocumentaryPreview>({
+    id: '1',
+    title: 'The Journey Home',
+    description: 'A documentary exploring the concept of home and belonging',
+    versions: [
+      {
+        id: 'v1',
+        name: 'First Cut',
+        description: 'Initial rough cut for review',
+        videoUrl: 'https://example.com/video.mp4',
+        thumbnailUrl: '',
+        duration: 1800, // 30 minutes
+        status: 'review',
+        scenes: [],
+        feedback: [],
+        metrics: {
+          views: 120,
+          completionRate: 0.65,
+          averageWatchTime: 1200,
+          engagementScore: 0.72,
+          dropOffPoints: [
+            { timestamp: 300, rate: 0.05 },
+            { timestamp: 600, rate: 0.12 },
+            { timestamp: 900, rate: 0.08 },
+            { timestamp: 1200, rate: 0.15 }
+          ],
+          emotionalResponseData: [
+            { timestamp: 180, emotion: 'joy', intensity: 0.6 },
+            { timestamp: 420, emotion: 'sadness', intensity: 0.8 },
+            { timestamp: 780, emotion: 'surprise', intensity: 0.7 },
+            { timestamp: 1200, emotion: 'hope', intensity: 0.9 }
+          ],
+          demographicBreakdown: []
+        },
+        notes: 'First assembly cut for internal review',
+        createdAt: new Date('2023-05-20'),
+        updatedAt: new Date('2023-05-20')
+      }
+    ],
+    feedbackSessions: [],
+    trailers: [],
+    socialContent: [],
+    pitchMaterials: [],
+    marketAnalysis: {
+      targetAudiences: [
+        {
+          id: 'audience-1',
+          name: 'Documentary Enthusiasts',
+          demographics: {
+            ageRange: '25-54',
+            gender: ['Male', 'Female'],
+            location: ['Urban', 'Suburban'],
+            income: 'Middle to Upper',
+            education: ['College', 'Graduate']
+          },
+          psychographics: {
+            interests: ['Documentaries', 'Social Issues', 'Film Festivals'],
+            values: ['Truth', 'Social Justice', 'Cultural Understanding'],
+            behaviors: ['Streaming Service Subscribers', 'Film Festival Attendees'],
+            mediaConsumption: ['Streaming Platforms', 'Independent Theaters']
+          },
+          size: 5000000,
+          reachability: 0.4,
+          priority: 'primary'
+        }
+      ],
+      competitiveAnalysis: [
+        {
+          id: 'comp-1',
+          title: 'Home: The Documentary',
+          creator: 'Jane Smith',
+          releaseDate: new Date('2022-03-15'),
+          platform: ['Netflix', 'Film Festivals'],
+          audienceOverlap: 0.6,
+          strengths: ['High production value', 'Celebrity interviews'],
+          weaknesses: ['Limited scope', 'Conventional approach'],
+          performance: {
+            views: 2500000,
+            revenue: 750000,
+            awards: ['Best Documentary - Small Festival'],
+            criticScore: 8.2,
+            audienceScore: 7.8
+          }
+        }
+      ],
+      marketTrends: [
+        {
+          id: 'trend-1',
+          name: 'Rise in Documentary Streaming',
+          description: 'Increasing viewership of documentaries on streaming platforms',
+          impact: 'positive',
+          relevance: 0.9,
+          sources: ['Industry Report 2023'],
+          projectedDuration: '3-5 years'
+        }
+      ],
+      distributionChannels: [
+        {
+          id: 'channel-1',
+          name: 'Netflix',
+          type: 'streaming',
+          audienceReach: 220000000,
+          revenueModel: 'Licensing Fee',
+          requirements: ['Professional Delivery', 'Closed Captions', 'Multiple Languages'],
+          competitiveness: 0.9,
+          relevance: 0.8,
+          costStructure: {
+            entryFee: 0,
+            revenueSplit: 'Flat fee',
+            marketingRequirements: 'Self-promotion'
+          }
+        }
+      ],
+      revenueProjections: [
+        {
+          channel: 'Streaming',
+          scenario: 'moderate',
+          timeline: [
+            {
+              period: 'Year 1',
+              revenue: 100000,
+              costs: 20000,
+              profit: 80000
+            }
+          ],
+          totalRevenue: 100000,
+          roi: 4,
+          breakEvenPoint: '6 months'
+        }
+      ],
+      swotAnalysis: {
+        strengths: ['Unique perspective', 'Strong character stories', 'High production value'],
+        weaknesses: ['Limited budget', 'Niche subject matter'],
+        opportunities: ['Growing documentary market', 'Festival circuit exposure'],
+        threats: ['Competitive marketplace', 'Platform algorithm changes']
+      }
+    },
+    distributionPlan: {
+      strategy: 'Begin with festival circuit to build buzz, followed by streaming platform release and educational distribution',
+      timeline: [
+        {
+          id: 'milestone-1',
+          name: 'Festival Submissions',
+          date: new Date('2023-08-01'),
+          description: 'Submit to major film festivals',
+          deliverables: ['Festival Cut', 'Press Kit', 'Trailer'],
+          status: 'planned'
+        },
+        {
+          id: 'milestone-2',
+          name: 'Streaming Release',
+          date: new Date('2023-12-01'),
+          description: 'Release on major streaming platforms',
+          deliverables: ['Final Cut', 'Marketing Materials', 'Subtitles'],
+          status: 'planned'
+        }
+      ],
+      channels: [
+        {
+          id: 'planned-1',
+          name: 'Sundance Film Festival',
+          type: 'festival',
+          launchDate: new Date('2024-01-15'),
+          strategy: 'Build critical acclaim and audience buzz',
+          audience: 'Film industry and enthusiasts',
+          projectedReach: 50000,
+          status: 'planned'
+        }
+      ],
+      marketingPlan: [
+        {
+          id: 'marketing-1',
+          name: 'Social Media Campaign',
+          type: 'social',
+          startDate: new Date('2023-11-01'),
+          endDate: new Date('2023-12-15'),
+          budget: 5000,
+          targetAudience: ['Documentary Fans', 'Subject Matter Enthusiasts'],
+          description: 'Targeted social media campaign across platforms',
+          kpis: ['Reach', 'Engagement', 'Click-through'],
+          status: 'planned'
+        }
+      ],
+      budget: {
+        total: 25000,
+        breakdown: [
+          {
+            category: 'Festival Submissions',
+            amount: 5000,
+            description: 'Entry fees for major and minor festivals'
+          },
+          {
+            category: 'Marketing',
+            amount: 10000,
+            description: 'Social media, PR, and promotional materials'
+          },
+          {
+            category: 'Distribution',
+            amount: 7500,
+            description: 'Platform fees and delivery requirements'
+          },
+          {
+            category: 'Legal',
+            amount: 2500,
+            description: 'Contracts and rights management'
+          }
+        ]
+      },
+      kpis: [
+        {
+          name: 'Festival Acceptances',
+          target: '5 major festivals',
+          timeline: 'Q1 2024',
+          measurement: 'Number of acceptances'
+        },
+        {
+          name: 'Streaming Views',
+          target: '500,000 in first 3 months',
+          timeline: 'Q2 2024',
+          measurement: 'Platform analytics'
+        }
+      ]
+    },
+    createdAt: new Date('2023-05-15'),
+    updatedAt: new Date('2023-05-15')
+  });
+
   const handleScriptUpdate = (updatedScript: Script) => {
     setScript(updatedScript);
   };
@@ -286,98 +516,9 @@ function App() {
     setProductionProject(updatedProject);
   };
 
-  // Sample transcription project for demo
-  const sampleTranscription: TranscriptionProject = {
-    id: '1',
-    name: 'Interview with Subject',
-    audioUrl: '#',
-    duration: 600, // 10 minutes
-    status: 'completed',
-    transcript: [
-      {
-        id: '1',
-        startTime: 0,
-        endTime: 15,
-        text: "Hello and welcome to our documentary interview. Today we're speaking with Jane Smith about her experiences.",
-        speaker: 'interviewer',
-        confidence: 0.95,
-        edited: false,
-        locked: false
-      },
-      {
-        id: '2',
-        startTime: 16,
-        endTime: 30,
-        text: "Thank you for having me. I'm excited to share my story with your audience.",
-        speaker: 'subject',
-        confidence: 0.92,
-        edited: false,
-        locked: false
-      },
-      {
-        id: '3',
-        startTime: 31,
-        endTime: 45,
-        text: "Let's start at the beginning. Can you tell us about your early experiences in the field?",
-        speaker: 'interviewer',
-        confidence: 0.94,
-        edited: false,
-        locked: false
-      },
-      {
-        id: '4',
-        startTime: 46,
-        endTime: 90,
-        text: "Of course. I started my journey about fifteen years ago when the industry was very different. There were many challenges we faced that people today wouldn't even imagine. The technology was primitive by today's standards, and we had to be much more creative with our solutions.",
-        speaker: 'subject',
-        confidence: 0.88,
-        edited: false,
-        locked: false
-      }
-    ],
-    speakers: [
-      {
-        id: 'interviewer',
-        name: 'Interviewer',
-        color: '#4f46e5',
-        segments: 2,
-        totalDuration: 30,
-        averageConfidence: 0.945
-      },
-      {
-        id: 'subject',
-        name: 'Jane Smith',
-        color: '#10b981',
-        segments: 2,
-        totalDuration: 60,
-        averageConfidence: 0.9
-      }
-    ],
-    settings: {
-      language: 'en-US',
-      speakerDiarization: true,
-      punctuation: true,
-      timestamps: true,
-      confidence: true,
-      filterProfanity: false,
-      enhanceAudio: true,
-      customVocabulary: []
-    },
-    createdAt: new Date(),
-    updatedAt: new Date()
+  const handlePreviewProjectUpdate = (updatedPreview: DocumentaryPreview) => {
+    setPreviewProject(updatedPreview);
   };
-
-  const tabs = [
-    { id: 'editor', label: 'Script Editor', icon: Edit3 },
-    { id: 'storyboard', label: 'Storyboard Converter', icon: Film },
-    { id: 'transcription', label: 'Transcription Editor', icon: FileText },
-    { id: 'voiceover', label: 'Voiceover Generator', icon: Mic },
-    { id: 'analyze', label: 'Script Analysis', icon: BarChart2 },
-    { id: 'collaborate', label: 'Collaboration', icon: Users },
-    { id: 'abtest', label: 'A/B Testing', icon: Split },
-    { id: 'emotional', label: 'Emotional Arcs', icon: Heart },
-    { id: 'production', label: 'Production Manager', icon: Calendar }
-  ];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -425,7 +566,18 @@ function App() {
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <nav className="flex space-x-8" aria-label="Tabs">
-            {tabs.map((tab) => {
+            {[
+              { id: 'editor', label: 'Script Editor', icon: Edit3 },
+              { id: 'storyboard', label: 'Storyboard Converter', icon: Film },
+              { id: 'transcription', label: 'Transcription Editor', icon: FileText },
+              { id: 'voiceover', label: 'Voiceover Generator', icon: Mic },
+              { id: 'analyze', label: 'Script Analysis', icon: BarChart2 },
+              { id: 'collaborate', label: 'Collaboration', icon: Users },
+              { id: 'abtest', label: 'A/B Testing', icon: Split },
+              { id: 'emotional', label: 'Emotional Arcs', icon: Heart },
+              { id: 'production', label: 'Production Manager', icon: Calendar },
+              { id: 'preview', label: 'Preview System', icon: Play }
+            ].map((tab) => {
               const Icon = tab.icon;
               return (
                 <button
@@ -436,7 +588,6 @@ function App() {
                       ? 'border-blue-500 text-blue-600'
                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                   }`}
-                  disabled={tab.id === 'editor' && !script}
                 >
                   <Icon className="w-4 h-4" />
                   <span>{tab.label}</span>
@@ -492,6 +643,11 @@ function App() {
           <ProductionManagementSystem 
             project={productionProject}
             onProjectUpdate={handleProductionProjectUpdate}
+          />
+        ) : activeTab === 'preview' ? (
+          <InteractivePreviewSystem
+            preview={previewProject}
+            onPreviewUpdate={handlePreviewProjectUpdate}
           />
         ) : (
           <div className="text-center py-20">
@@ -552,5 +708,86 @@ function App() {
     </div>
   );
 }
+
+// Sample transcription data for demo
+const sampleTranscription: TranscriptionProject = {
+  id: '1',
+  name: 'Interview with Subject',
+  audioUrl: '#',
+  duration: 600, // 10 minutes
+  status: 'completed',
+  transcript: [
+    {
+      id: '1',
+      startTime: 0,
+      endTime: 15,
+      text: "Hello and welcome to our documentary interview. Today we're speaking with Jane Smith about her experiences.",
+      speaker: 'interviewer',
+      confidence: 0.95,
+      edited: false,
+      locked: false
+    },
+    {
+      id: '2',
+      startTime: 16,
+      endTime: 30,
+      text: "Thank you for having me. I'm excited to share my story with your audience.",
+      speaker: 'subject',
+      confidence: 0.92,
+      edited: false,
+      locked: false
+    },
+    {
+      id: '3',
+      startTime: 31,
+      endTime: 45,
+      text: "Let's start at the beginning. Can you tell us about your early experiences in the field?",
+      speaker: 'interviewer',
+      confidence: 0.94,
+      edited: false,
+      locked: false
+    },
+    {
+      id: '4',
+      startTime: 46,
+      endTime: 90,
+      text: "Of course. I started my journey about fifteen years ago when the industry was very different. There were many challenges we faced that people today wouldn't even imagine. The technology was primitive by today's standards, and we had to be much more creative with our solutions.",
+      speaker: 'subject',
+      confidence: 0.88,
+      edited: false,
+      locked: false
+    }
+  ],
+  speakers: [
+    {
+      id: 'interviewer',
+      name: 'Interviewer',
+      color: '#4f46e5',
+      segments: 2,
+      totalDuration: 30,
+      averageConfidence: 0.945
+    },
+    {
+      id: 'subject',
+      name: 'Jane Smith',
+      color: '#10b981',
+      segments: 2,
+      totalDuration: 60,
+      averageConfidence: 0.9
+    }
+  ],
+  settings: {
+    language: 'en-US',
+    speakerDiarization: true,
+    punctuation: true,
+    timestamps: true,
+    confidence: true,
+    filterProfanity: false,
+    enhanceAudio: true,
+    customVocabulary: []
+  },
+  createdAt: new Date(),
+  updatedAt: new Date()
+};
 
 export default App;
