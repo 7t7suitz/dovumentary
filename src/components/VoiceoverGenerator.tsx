@@ -1,6 +1,5 @@
 import React, { useState, useRef } from 'react';
 import { VoiceoverGeneration, VoiceProfile, VoiceSettings } from '../types/script';
-import { useSpeechSynthesis } from 'react-speech-kit';
 import { 
   Mic, 
   Play, 
@@ -12,7 +11,8 @@ import {
   Save,
   Wand2,
   Sliders,
-  RefreshCw
+  RefreshCw,
+  Trash2
 } from 'lucide-react';
 
 interface VoiceoverGeneratorProps {
@@ -38,8 +38,27 @@ export const VoiceoverGenerator: React.FC<VoiceoverGeneratorProps> = ({
   const [generatedVoiceover, setGeneratedVoiceover] = useState<VoiceoverGeneration | null>(null);
   const [estimatedDuration, setEstimatedDuration] = useState(0);
   
-  const { speak, cancel, speaking, voices } = useSpeechSynthesis();
+  // Use Web Speech API directly instead of react-speech-kit
+  const [speechSynthesis, setSpeechSynthesis] = useState<SpeechSynthesis | null>(
+    typeof window !== 'undefined' ? window.speechSynthesis : null
+  );
+  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [speaking, setSpeaking] = useState(false);
+  
   const audioRef = useRef<HTMLAudioElement>(null);
+
+  // Load available voices
+  React.useEffect(() => {
+    if (speechSynthesis) {
+      const loadVoices = () => {
+        const availableVoices = speechSynthesis.getVoices();
+        setVoices(availableVoices);
+      };
+      
+      loadVoices();
+      speechSynthesis.onvoiceschanged = loadVoices;
+    }
+  }, [speechSynthesis]);
 
   const availableVoices: VoiceProfile[] = [
     {
@@ -166,8 +185,11 @@ export const VoiceoverGenerator: React.FC<VoiceoverGeneratorProps> = ({
   };
 
   const handlePlayPreview = () => {
+    if (!speechSynthesis || !text) return;
+
     if (speaking) {
-      cancel();
+      speechSynthesis.cancel();
+      setSpeaking(false);
       setIsPlaying(false);
       return;
     }
@@ -178,15 +200,30 @@ export const VoiceoverGenerator: React.FC<VoiceoverGeneratorProps> = ({
       v.name.toLowerCase().includes(selectedVoice?.accent.toLowerCase() || '')
     );
 
-    speak({ 
-      text, 
-      voice: matchingVoice,
-      rate: voiceSettings.speed,
-      pitch: voiceSettings.pitch,
-      volume: voiceSettings.volume
-    });
-    
-    setIsPlaying(true);
+    const utterance = new SpeechSynthesisUtterance(text);
+    if (matchingVoice) {
+      utterance.voice = matchingVoice;
+    }
+    utterance.rate = voiceSettings.speed;
+    utterance.pitch = voiceSettings.pitch;
+    utterance.volume = voiceSettings.volume;
+
+    utterance.onstart = () => {
+      setSpeaking(true);
+      setIsPlaying(true);
+    };
+
+    utterance.onend = () => {
+      setSpeaking(false);
+      setIsPlaying(false);
+    };
+
+    utterance.onerror = () => {
+      setSpeaking(false);
+      setIsPlaying(false);
+    };
+
+    speechSynthesis.speak(utterance);
   };
 
   const formatTime = (seconds: number) => {
